@@ -1,10 +1,13 @@
-var fs         = require('fs');
-var express    = require('express');
 var bodyParser = require('body-parser');
+var express    = require('express');
+var fs         = require('fs');
+var morgan     = require('morgan');
 var app        = express();
 
+// App config
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
 var system = {
   modules: [],
