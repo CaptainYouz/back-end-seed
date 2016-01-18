@@ -29,6 +29,6 @@ var system = {
 
 system.init(app);
 
-var server = app.listen(3000, function () {
+var server = app.listen(process.env.PORT || 8080, function () {
   console.log('Listening on port %s...', server.address().port);
 });
