@@ -1,0 +1,27 @@
+{
+  "name": "back-end-seed",
+  "version": "1.0.0",
+  "description": "A simple back end seed project with authentication and user creation",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/CaptainYouz/back-end-seed.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Anas M <captainyouz@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CaptainYouz/back-end-seed/issues"
+  },
+  "homepage": "https://github.com/CaptainYouz/back-end-seed#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "fs": "0.0.2"
+  }
+}
