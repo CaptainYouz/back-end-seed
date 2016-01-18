@@ -4,6 +4,7 @@
   "description": "A simple back end seed project with authentication and user creation",
   "main": "index.js",
   "scripts": {
+    "start": "node .",
     "test": "npm test"
   },
   "repository": {
