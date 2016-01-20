@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = function(Model) {
   var Users = {
   	create: create,
   	get: get,
@@ -11,6 +11,19 @@ module.exports = function() {
    */
   function create(user) {
     console.log('controller create user :', user);
+    if (user.email && user.firstname && user.lastname) {
+      var newUser = new Model({
+        name: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname
+      });
+
+      newUser.save(function(err) {
+        if (err) throw err;
+        console.log('User ' + user.email + ' saved !');
+        res.json({success: true});
+      });
+    }
   }
 
   /**

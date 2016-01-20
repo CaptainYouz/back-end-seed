@@ -1,6 +1,8 @@
 var bodyParser = require('body-parser');
+var config     = require('./config.json');
 var express    = require('express');
 var fs         = require('fs');
+var mongoose   = require('mongoose');
 var morgan     = require('morgan');
 var app        = express();
 
@@ -12,6 +14,9 @@ app.use(morgan('dev'));
 var system = {
   modules: [],
   modulesPath: __dirname + '/modules/',
+  initDatabase: function(app) {
+    app.__db = mongoose.connect(config.db.url);
+  },
   loadModules: function(app) {
     var modulesPath  = this.modulesPath;
     var modulesList = fs.readdirSync(modulesPath);
@@ -23,6 +28,7 @@ var system = {
     });
   },
   init: function(app) {
+    this.initDatabase(app);
     this.loadModules(app);
   }
 };
