@@ -9,19 +9,19 @@ module.exports = function(Model) {
   /**
    * Create a user
    */
-  function create(user) {
-    console.log('controller create user :', user);
-    if (user.email && user.firstname && user.lastname) {
-      var newUser = new Model({
-        name: user.email,
-        firstname: user.firstname,
-        lastname: user.lastname
+  function create(req,res) {
+    if (!(req.body.name && req.body.email && req.body.password)) res.status(412).send({success: false, message: 'Param name, email and password are required'});
+    else {
+      var user = new Model({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        admin: req.body.admin
       });
 
-      newUser.save(function(err) {
+      user.save(function(err, newUser) {
         if (err) throw err;
-        console.log('User ' + user.email + ' saved !');
-        res.json({success: true});
+        else res.status(200).send({success: true, user: newUser});
       });
     }
   }
@@ -30,9 +30,20 @@ module.exports = function(Model) {
    * Get the list of users. If id is avaialble,
    * fetch the specific user
    */
-  function get(id) {
-    if (id) console.log('controller get user : ' + id);
-    else console.log('controller get list of users');
+  function get(id, res) {
+    if (id) {
+      Model.find({email: id}, function(err, user) {
+        if (err) throw err;
+        if (!user.length) res.status(404).send({success: false, message: 'User not found'});
+        else if (user.length) res.status(200).send({success: true, user: user});
+      });
+    } else {
+      Model.find({}, function(err, users) {
+        if (err) throw err;
+        if (!users) res.status(404).send({success: false, message: 'No users found'});
+        else if (users) res.status(200).send({success: true, users: users});
+      });
+    }
   }
 
   /**

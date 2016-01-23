@@ -1,40 +1,36 @@
+var express = require('express');
+
 /**
  * Small custom router that fetch the url
  * and call the associate CRUD method from
  * front the controller
  */
 module.exports = function(app, controller) {
+  var routes = express.Router();
+
   // CREATE
-  app.post('/users', function(req, res, next) {
-    res.send('Hello create Users!');
-    controller.create(req.body);
-    next();
+  routes.post('/', function(req, res) {
+    controller.create(req, res);
   });
 
   // READ
-  app.get('/users', function(req, res, next) {
-    res.send('Hello get Users!');
-    controller.get();
-    next();
+  routes.get('/', function(req, res) {
+    controller.get(false, res);
   });
 
-  app.get('/users/:id', function(req, res, next) {
-    res.send('Hello get Users ' + req.params.id + '!');
-    controller.get(req.params.id);
-    next();
+  routes.get('/:id', function(req, res) {
+    controller.get(req.params.id, res);
   });
 
   // UPDATE
-  app.put('/users/:id', function(req, res, next) {
-    res.send('Hello update Users ' + req.params.id + '!');
+  routes.put('/:id', function(req, res) {
     controller.update(req.params.id, req.body);
-    next();
   });
 
   // DELETE
-  app.delete('/users/:id', function(req, res, next) {
-    res.send('Hello delete ' + req.params.id + ' Users!');
+  routes.delete('/:id', function(req, res) {
     controller.remove(req.params.id);
-    next();
   });
+
+  app.use('/users', routes);
 };

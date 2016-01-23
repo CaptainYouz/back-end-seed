@@ -1,5 +1,8 @@
 {
 	"db": {
 		"url": "mongodb://<user>:<password>@<url>/<dbName>"
+	},
+	"access": {
+		"secretKey": "amazing"
 	}
 }
