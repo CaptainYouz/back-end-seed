@@ -22,7 +22,7 @@ var system = {
     modulesList.forEach(function(folder) {
       var m = require(modulesPath + folder)(app);
       m.init(app);
-      app.__modules.push(m);
+      app.__modules[m.moduleName] = m;
     });
   },
   init: function(app) {
@@ -32,9 +32,7 @@ var system = {
     app.__getModule = getModule;
 
     function getModule(moduleName) {
-      return _.find(app.__modules, function(mod) {
-        return mod.moduleName === moduleName;
-      });
+      return app.__modules[moduleName];
     }
 
     this.loadModules(app);

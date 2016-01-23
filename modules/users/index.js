@@ -3,14 +3,14 @@ module.exports = function(app) {
   var Controller = require('./controller.js')(Model);
 
   var obj = {
-    moduleName: 'user',
+    moduleName: 'users',
     model: Model,
     controller: Controller,
     init: init
   };
 
   function init(app) {
-    require('./routes.js')(app, this.controller);
+    require('./routes.js')(obj.moduleName, app, this.controller);
   }
 
   return obj;

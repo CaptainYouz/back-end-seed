@@ -5,12 +5,16 @@ var express = require('express');
  * and call the associate CRUD method from
  * front the controller
  */
-module.exports = function(app, controller) {
+module.exports = function(moduleName, app, controller) {
   var routes = express.Router();
 
   // CREATE
-  routes.post('/', function(req, res) {
+  app.post('/' + moduleName, function(req, res) {
     controller.create(req, res);
+  });
+
+  routes.use(function(req, res, next) {
+    app.__getModule('auth').controller.isAuth(req,res,next);
   });
 
   // READ
@@ -32,5 +36,5 @@ module.exports = function(app, controller) {
     controller.remove(req.params.id);
   });
 
-  app.use('/users', routes);
+  app.use('/' + moduleName, routes);
 };
