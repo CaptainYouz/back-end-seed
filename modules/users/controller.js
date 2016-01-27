@@ -9,14 +9,14 @@ module.exports = function(Model) {
   /**
    * Create a user
    */
-  function create(req,res) {
-    if (!(req.body.name && req.body.email && req.body.password)) res.status(412).send({success: false, message: 'Param name, email and password are required'});
+  function create(req, res) {
+    if (!(req.body.name && req.body.email && req.body.password && req.body.role)) res.status(412).send({success: false, message: 'Param name, email, role and password are required'});
     else {
       var user = new Model({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        admin: req.body.admin
+        role: req.body.role
       });
 
       user.save(function(err, newUser) {
@@ -40,8 +40,8 @@ module.exports = function(Model) {
     } else {
       Model.find({}, function(err, users) {
         if (err) throw err;
-        if (!users) res.status(404).send({success: false, message: 'No users found'});
-        else if (users) res.status(200).send({success: true, users: users});
+        if (!users.length) res.status(404).send({success: false, message: 'No users found'});
+        else if (users.length) res.status(200).send({success: true, users: users});
       });
     }
   }
@@ -56,8 +56,19 @@ module.exports = function(Model) {
   /**
    * Remove a user
    */
-  function remove(id) {
-    console.log('controller remove user : ' + id);
+  function remove(id, res) {
+    if (id) {
+      Model.find({email: id}, function(err, user) {
+        if (err) throw err;
+        if (!user.length) res.status(404).send({success: false, message: 'User not found'});
+        else if (user.length) {
+          user[0].remove(function (err, jesaispas) {
+            if (err) res.status(404).send({success: false, message: 'Error on delete'});
+            else res.status(200).send({success: true, users: id + ' has been deleted.'});
+          })
+        }
+      });
+    }
   }
 
   return Users;
