@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken');
 module.exports = function(app) {
   var Auth = {
     login: login,
-    isAuth: isAuth
+    hasAccess: hasAccess
   };
 
   /**
@@ -22,7 +22,7 @@ module.exports = function(app) {
         else if (user) {
           if (user.password != req.body.password) res.status(412).send({success: false, message: 'Wrond password !'});
           else {
-            var token = jwt.sign(user, app.__config.access.secretKey, { expiresIn: 1440 });
+            var token = jwt.sign(user, app.__config.access.secretKey, { expiresIn: 11440 });
             res.json({success: true, user: user, token: token});
           }
         }
@@ -30,12 +30,11 @@ module.exports = function(app) {
     }
   }
 
-
   /**
    * Verify if the request has a token parameter and if yes
-   * check the validity of it.
+   * check the validity of it and the permissions for the next url
    */
-  function isAuth(req, res, next) {
+  function hasAccess(requiredRoles, req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
     if (!token) res.status(403).send({success: false, message: 'No token provided'});
@@ -43,8 +42,10 @@ module.exports = function(app) {
       jwt.verify(token, app.__config.access.secretKey, function(err, decoded) {
         if (err) return res.status(401).send({success: false, message: 'Token not valid.'});
         else {
-          req.decoded = decoded;
-          next();
+          var hasPermission = requiredRoles.some(function (reqRole) { return reqRole === decoded._doc.role; });
+
+          if (hasPermission) next();
+          else res.status(401).send({success: false, message: 'Unauthorized'});
         }
       });
     }
