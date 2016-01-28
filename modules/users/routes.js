@@ -8,8 +8,13 @@ var express = require('express');
 module.exports = function(mod, app, controller) {
   var routes = express.Router();
 
+  function adminCreation(req, res, next) {
+    if (req.body.role === 'admin') app.__getModule('auth').controller.hasAccess(['admin'],req,res,next);
+    else next();
+  }
+
   // CREATE
-  app.post('/' + mod.moduleName, function(req, res) {
+  app.post('/' + mod.moduleName, adminCreation, function(req, res) {
     controller.create(req, res);
   });
 
