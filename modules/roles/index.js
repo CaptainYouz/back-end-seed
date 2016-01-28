@@ -5,12 +5,13 @@ module.exports = function(app) {
   var obj = {
     moduleName: 'roles',
     model: Model,
+    permissions: 'all',
     controller: Controller,
     init: init
   };
 
   function init(app) {
-    require('./routes.js')(obj.moduleName, app, this.controller);
+    require('./routes.js')(this, app);
   }
 
   return obj;

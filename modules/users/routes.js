@@ -5,8 +5,9 @@ var express = require('express');
  * and call the associate CRUD method from
  * front the controller
  */
-module.exports = function(mod, app, controller) {
-  var routes = express.Router();
+module.exports = function(mod, app) {
+  var controller = mod.controller;
+  var routes     = express.Router();
 
   function adminCreation(req, res, next) {
     if (req.body.role === 'admin') app.__getModule('auth').controller.hasAccess(['admin'],req,res,next);

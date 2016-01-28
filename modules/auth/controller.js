@@ -42,10 +42,13 @@ module.exports = function(app) {
       jwt.verify(token, app.__config.access.secretKey, function(err, decoded) {
         if (err) return res.status(401).send({success: false, message: 'Token not valid.'});
         else {
-          var hasPermission = requiredRoles.some(function (reqRole) { return reqRole === decoded._doc.role; });
+          if (requiredRoles === 'all') next();
+          else {
+            var hasPermission = requiredRoles.some(function (reqRole) { return reqRole === decoded._doc.role; });
 
-          if (hasPermission) next();
-          else res.status(401).send({success: false, message: 'Unauthorized'});
+            if (hasPermission) next();
+            else res.status(401).send({success: false, message: 'Unauthorized'});
+          }
         }
       });
     }
