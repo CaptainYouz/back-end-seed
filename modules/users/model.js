@@ -9,5 +9,7 @@ module.exports = function() {
     role: String
   }));
 
+  User._canBeUpdated = ['name'];
+
   return User;
 };

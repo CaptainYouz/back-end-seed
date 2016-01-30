@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = function(Model) {
   var Users = {
   	create: create,
@@ -49,8 +51,22 @@ module.exports = function(Model) {
   /**
    * Update a user
    */
-  function update(id, user) {
-    console.log('controller update user : ' + id + ' with field : ', user);
+  function update(id, body, res) {
+    if (id && !_.isEmpty(body)) {
+      Model.find({email: id}, function(err, user) {
+        if (err) throw err;
+        if (!user.length) res.status(404).send({success: false, message: 'User not found'});
+        else if (user.length) {
+          Model._canBeUpdated.forEach(function(field) {
+            if (body[field] !== undefined) user[0][field] = body[field];
+          });
+          user[0].save(function(err, savedUser) {
+            if (err) throw err;
+            else res.status(200).send({success: true, user: savedUser});
+          });
+        }
+      });
+    } else res.status(412).send({success: false, message: 'You need to provide an id and a body to update corresponding fields'});
   }
 
   /**
@@ -62,7 +78,7 @@ module.exports = function(Model) {
         if (err) throw err;
         if (!user.length) res.status(404).send({success: false, message: 'User not found'});
         else if (user.length) {
-          user[0].remove(function (err, jesaispas) {
+          user[0].remove(function (err) {
             if (err) res.status(404).send({success: false, message: 'Error on delete'});
             else res.status(200).send({success: true, users: id + ' has been deleted.'});
           })

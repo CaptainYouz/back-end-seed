@@ -29,7 +29,7 @@ module.exports = function(mod, app) {
 
   // UPDATE
   routes.put('/:id', function(req, res) {
-    controller.update(req.params.id, req.body);
+    controller.update(req.params.id, req.body, res);
   });
 
   // DELETE
