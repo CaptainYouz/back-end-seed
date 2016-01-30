@@ -1,6 +1,6 @@
 module.exports = function(app) {
   var Model      = require('./model.js')();
-  var Controller = require('./controller.js')(Model);
+  var Controller = require('./controller.js')(Model, app.__res);
 
   var obj = {
     moduleName: 'users',

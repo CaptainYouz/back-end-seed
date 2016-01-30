@@ -2,12 +2,14 @@ var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
 module.exports = function() {
-  var User = mongoose.model('User', new Schema({
-    email: String,
+  var userSchema = new Schema({
+    email: {type: String, uniq: true, required: true},
     name: String,
-    password: String,
-    role: String
-  }));
+    password: {type: String, required: true},
+    role: {type: String, required: true}
+  });
+
+  var User = mongoose.model('User', userSchema);
 
   User._canBeUpdated = ['name'];
 

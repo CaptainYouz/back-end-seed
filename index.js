@@ -5,6 +5,7 @@ var express    = require('express');
 var fs         = require('fs');
 var mongoose   = require('mongoose');
 var morgan     = require('morgan');
+var httpRes    = require('./helpers/HTTP-response.js')();
 var app        = express();
 
 // App config
@@ -30,6 +31,7 @@ var system = {
     app.__modules   = [];
     app.__db        = mongoose.connect(app.__config.db.url);
     app.__getModule = getModule;
+    app.__res       = httpRes;
 
     function getModule(moduleName) {
       return app.__modules[moduleName];

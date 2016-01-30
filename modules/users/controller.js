@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function(Model) {
+module.exports = function(Model, RES) {
   var Users = {
   	create: create,
   	get: get,
@@ -22,8 +22,8 @@ module.exports = function(Model) {
       });
 
       user.save(function(err, newUser) {
-        if (err) throw err;
-        else res.status(200).send({success: true, user: newUser});
+        if (err) RES.error(res, 500, err.message);
+        else RES.success(res, 'User created', newUser);
       });
     }
   }
@@ -34,16 +34,14 @@ module.exports = function(Model) {
    */
   function get(id, res) {
     if (id) {
-      Model.find({email: id}, function(err, user) {
-        if (err) throw err;
-        if (!user.length) res.status(404).send({success: false, message: 'User not found'});
-        else if (user.length) res.status(200).send({success: true, user: user});
+      Model.find({_id: id}, function(err, user) {
+        if (err) RES.error(res, 404, 'User not found');
+        else if (user.length) RES.success(res, 'User with id' + id, user[0]);
       });
     } else {
       Model.find({}, function(err, users) {
-        if (err) throw err;
-        if (!users.length) res.status(404).send({success: false, message: 'No users found'});
-        else if (users.length) res.status(200).send({success: true, users: users});
+        if (err) RES.error(res, 404, 'Users not found');
+        else if (users.length) RES.success(res, 'List of users', users);
       });
     }
   }
@@ -53,16 +51,16 @@ module.exports = function(Model) {
    */
   function update(id, body, res) {
     if (id && !_.isEmpty(body)) {
-      Model.find({email: id}, function(err, user) {
-        if (err) throw err;
-        if (!user.length) res.status(404).send({success: false, message: 'User not found'});
+      Model.find({_id: id}, function(err, user) {
+        if (err || !user.length) RES.error(res, 404, 'User not found');
         else if (user.length) {
           Model._canBeUpdated.forEach(function(field) {
             if (body[field] !== undefined) user[0][field] = body[field];
           });
-          user[0].save(function(err, savedUser) {
-            if (err) throw err;
-            else res.status(200).send({success: true, user: savedUser});
+
+          user[0].save(function(err, updatedUser) {
+            if (err) RES.error(res, 404, err.message);
+            else RES.success(res, 'Updated user', updatedUser);
           });
         }
       });
@@ -74,14 +72,13 @@ module.exports = function(Model) {
    */
   function remove(id, res) {
     if (id) {
-      Model.find({email: id}, function(err, user) {
-        if (err) throw err;
-        if (!user.length) res.status(404).send({success: false, message: 'User not found'});
+      Model.find({_id: id}, function(err, user) {
+        if (err || !user.length) RES.error(res, 404, 'User not found');
         else if (user.length) {
-          user[0].remove(function (err) {
-            if (err) res.status(404).send({success: false, message: 'Error on delete'});
-            else res.status(200).send({success: true, users: id + ' has been deleted.'});
-          })
+          user[0].remove(function (err, deletedUser) {
+            if (err) RES.error(res, 404, err.message);
+            else RES.success(res, 'Deleted user', deletedUser);
+          });
         }
       });
     }
